@@ -45,13 +45,19 @@ ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 ENV NVIDIA_REQUIRE_CUDA "cuda>=9.1"
 
+RUN apt-get update; apt-get install -y cuda
+
+RUN nvidia-cuda-mps-control -d
+
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 # We add postgis as well to prevent build errors (that we dont see on local builds)
 # on docker hub e.g.
 # The following packages have unmet dependencies:
-RUN apt-get update; apt-get install -y postgresql-client-10 postgresql-common postgresql-10 postgresql-10-postgis-2.4 postgresql-10-pgrouting postgresql-server-dev-10 postgresql-10-citus gcc make netcat
+RUN apt-get update; apt-get install -y postgresql-client-10 postgresql-common postgresql-10 postgresql-10-postgis-2.4 postgresql-10-pgrouting postgresql-server-dev-10 postgresql-10-citus git nano gcc make netcat
+
+RUN git clone -b v2.0 --single-branch https://github.com/heterodb/pg-strom.git
 
 # Open port 5432 so linked containers can see them
 EXPOSE 5432
