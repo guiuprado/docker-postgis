@@ -1,6 +1,6 @@
 #--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
-FROM debian:stable
-#FROM ubuntu:16.04
+#FROM debian:stable
+FROM ubuntu:16.04
 LABEL maintainer "Tim Sutton<tim@kartoza.com> | NVIDIA CORPORATION <cudatools@nvidia.com>"
 
 RUN NVIDIA_GPGKEY_SUM=d1be581509378368edeec8c1eb2958702feedf3bc3d17011adbf24efacce4ab5 && \
