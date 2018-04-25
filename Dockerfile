@@ -1,6 +1,6 @@
 #--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
-FROM debian:stable
-#FROM ubuntu:16.04
+#FROM debian:stable
+FROM ubuntu:16.04
 LABEL maintainer "Tim Sutton<tim@kartoza.com> | NVIDIA CORPORATION <cudatools@nvidia.com>"
 
 RUN  export DEBIAN_FRONTEND=noninteractive
@@ -45,7 +45,7 @@ ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 ENV NVIDIA_REQUIRE_CUDA "cuda>=9.1"
 
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 # We add postgis as well to prevent build errors (that we dont see on local builds)
