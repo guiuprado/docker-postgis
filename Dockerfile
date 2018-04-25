@@ -3,6 +3,17 @@ FROM debian:stable
 #FROM ubuntu:16.04
 LABEL maintainer "Tim Sutton<tim@kartoza.com> | NVIDIA CORPORATION <cudatools@nvidia.com>"
 
+RUN  export DEBIAN_FRONTEND=noninteractive
+ENV  DEBIAN_FRONTEND noninteractive
+
+#-------------Application Specific Stuff ----------------------------------------------------
+
+RUN  dpkg-divert --local --rename --add /sbin/initctl
+RUN apt-get -y update; apt-get -y install gnupg2 wget ca-certificates rpl pwgen
+
+#-------------------------------------------------------------------------------------------
+
+
 RUN NVIDIA_GPGKEY_SUM=d1be581509378368edeec8c1eb2958702feedf3bc3d17011adbf24efacce4ab5 && \
     NVIDIA_GPGKEY_FPR=ae09fe4bbd223a84b2ccfce3f60f4b3d7fa2af80 && \
     apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub && \
@@ -34,20 +45,8 @@ ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 ENV NVIDIA_REQUIRE_CUDA "cuda>=9.1"
 
-RUN  export DEBIAN_FRONTEND=noninteractive
-ENV  DEBIAN_FRONTEND noninteractive
-RUN  dpkg-divert --local --rename --add /sbin/initctl
-
-#RUN apt-get update && apt-get install -my wget gnupg
-
-#RUN apt-get -y update; apt-get -y install gnupg2 wget ca-certificates rpl pwgen
-
-RUN apt-get -y update; apt-get -y install wget ca-certificates rpl pwgen
-
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-
-#-------------Application Specific Stuff ----------------------------------------------------
 
 # We add postgis as well to prevent build errors (that we dont see on local builds)
 # on docker hub e.g.
