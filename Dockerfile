@@ -38,9 +38,12 @@ RUN  export DEBIAN_FRONTEND=noninteractive
 ENV  DEBIAN_FRONTEND noninteractive
 RUN  dpkg-divert --local --rename --add /sbin/initctl
 
-RUN apt-get update && apt-get install -my wget gnupg
+#RUN apt-get update && apt-get install -my wget gnupg
 
-RUN apt-get -y update; apt-get -y install gnupg2 wget ca-certificates rpl pwgen
+#RUN apt-get -y update; apt-get -y install gnupg2 wget ca-certificates rpl pwgen
+
+RUN apt-get -y update; apt-get -y install wget ca-certificates rpl pwgen
+
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
