@@ -3,39 +3,6 @@ FROM debian:stable
 #FROM ubuntu:16.04
 LABEL maintainer "Tim Sutton<tim@kartoza.com> | NVIDIA CORPORATION <cudatools@nvidia.com>"
 
-#-------------Application Specific Stuff ----------------------------------------------------
-
-# We add postgis as well to prevent build errors (that we dont see on local builds)
-# on docker hub e.g.
-# The following packages have unmet dependencies:
-RUN apt-get update; apt-get install -y postgresql-client-10 postgresql-common postgresql-10 postgresql-10-postgis-2.4 postgresql-10-pgrouting postgresql-server-dev-10 postgresql-10-citus gcc make netcat
-
-# Open port 5432 so linked containers can see them
-EXPOSE 5432
-
-# Run any additional tasks here that are too tedious to put in
-# this dockerfile directly.
-ADD env-data.sh /env-data.sh
-ADD setup.sh /setup.sh
-RUN chmod +x /setup.sh
-RUN /setup.sh
-
-# We will run any commands in this when the container starts
-ADD docker-entrypoint.sh /docker-entrypoint.sh
-ADD setup-conf.sh /
-ADD setup-database.sh /
-ADD setup-pg_hba.sh /
-ADD setup-replication.sh /
-ADD setup-ssl.sh /
-ADD setup-user.sh /
-ADD postgresql.conf /tmp/postgresql.conf
-RUN chmod +x /docker-entrypoint.sh
-
-# Optimise postgresql
-RUN echo "kernel.shmmax=543252480" >> /etc/sysctl.conf
-RUN echo "kernel.shmall=2097152" >> /etc/sysctl.conf
-
-
 RUN NVIDIA_GPGKEY_SUM=d1be581509378368edeec8c1eb2958702feedf3bc3d17011adbf24efacce4ab5 && \
     NVIDIA_GPGKEY_FPR=ae09fe4bbd223a84b2ccfce3f60f4b3d7fa2af80 && \
     apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub && \
@@ -74,5 +41,37 @@ RUN  dpkg-divert --local --rename --add /sbin/initctl
 RUN apt-get -y update; apt-get -y install gnupg2 wget ca-certificates rpl pwgen
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+
+#-------------Application Specific Stuff ----------------------------------------------------
+
+# We add postgis as well to prevent build errors (that we dont see on local builds)
+# on docker hub e.g.
+# The following packages have unmet dependencies:
+RUN apt-get update; apt-get install -y postgresql-client-10 postgresql-common postgresql-10 postgresql-10-postgis-2.4 postgresql-10-pgrouting postgresql-server-dev-10 postgresql-10-citus gcc make netcat
+
+# Open port 5432 so linked containers can see them
+EXPOSE 5432
+
+# Run any additional tasks here that are too tedious to put in
+# this dockerfile directly.
+ADD env-data.sh /env-data.sh
+ADD setup.sh /setup.sh
+RUN chmod +x /setup.sh
+RUN /setup.sh
+
+# We will run any commands in this when the container starts
+ADD docker-entrypoint.sh /docker-entrypoint.sh
+ADD setup-conf.sh /
+ADD setup-database.sh /
+ADD setup-pg_hba.sh /
+ADD setup-replication.sh /
+ADD setup-ssl.sh /
+ADD setup-user.sh /
+ADD postgresql.conf /tmp/postgresql.conf
+RUN chmod +x /docker-entrypoint.sh
+
+# Optimise postgresql
+RUN echo "kernel.shmmax=543252480" >> /etc/sysctl.conf
+RUN echo "kernel.shmall=2097152" >> /etc/sysctl.conf
 
 ENTRYPOINT /docker-entrypoint.sh
