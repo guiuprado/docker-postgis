@@ -45,7 +45,7 @@ ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 ENV NVIDIA_REQUIRE_CUDA "cuda>=9.1"
 
-RUN apt-get update; apt-get install -y cuda
+RUN apt-get update; apt-get install -y cuda libicu-dev
 
 RUN nvidia-cuda-mps-control -d
 
